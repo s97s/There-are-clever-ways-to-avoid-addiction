@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
     
     <style>
-        /* --- v4.0 互動版 CSS 設定 --- */
+        /* --- v4.1 完整版 CSS 設定 --- */
         body { background-color: #050505; }
         .reveal { font-family: 'Segoe UI', 'Microsoft JhengHei', 'Courier New', monospace; }
         
@@ -61,26 +61,26 @@
             font-weight: bold;
             font-size: 40px;
             border-radius: 10px;
-            cursor: pointer; /* 滑鼠變成手指 */
+            cursor: pointer;
             transition: all 0.2s;
             background: rgba(0, 255, 204, 0.1);
             flex: 1;
             text-align: center;
-            user-select: none; /* 防止選取文字 */
+            user-select: none;
         }
         .game-btn:hover { 
             background: #00ffcc; 
             color: #000; 
             box-shadow: 0 0 40px #00ffcc; 
-            transform: scale(1.05); /* 稍微放大 */
+            transform: scale(1.05);
         }
         .game-btn:active {
-            transform: scale(0.95); /* 點擊時下壓感 */
+            transform: scale(0.95);
         }
         
-        /* 4. 結果彈窗 (預設隱藏) */
+        /* 4. 結果彈窗 */
         .result-popup {
-            display: none; /* 預設不顯示，靠 JS 觸發 */
+            display: none;
             position: fixed; 
             top: 50%; 
             left: 50%; 
@@ -94,7 +94,6 @@
             text-align: center;
         }
 
-        /* 彈窗內的關閉按鈕 */
         .close-btn {
             margin-top: 30px;
             padding: 10px 40px;
@@ -125,9 +124,18 @@
         <section data-background-gradient="linear-gradient(to bottom, #000000, #1a1a1a)">
             <h1>系統防禦戰</h1>
             <h3>拒絕成癮的資安守則</h3>
-            <div style="margin-top: 50px; border: 2px dashed #555; padding: 30px; display: inline-block;">
-                <p>Target: 國中七年級</p>
-                <p><small>Developer: 資管系教學組</small></p>
+            <p style="font-size: 0.6em; color: #888; margin-top: -10px;">(單元名稱：拒絕成癮有妙招)</p>
+            
+            <div style="margin-top: 30px; border: 2px dashed #00ffcc; padding: 30px; display: inline-block; text-align: left; width: 80%;">
+                <p style="font-size: 0.8em; margin: 15px 0; border-bottom: 1px solid #333; padding-bottom: 10px;">
+                    <strong style="color:#00ffcc;">領域：</strong>健康與體育 / 綜合活動 / 科技
+                </p>
+                <p style="font-size: 0.8em; margin: 15px 0; border-bottom: 1px solid #333; padding-bottom: 10px;">
+                    <strong style="color:#00ffcc;">對象：</strong>七年級 (共1節 / 45分鐘)
+                </p>
+                <p style="font-size: 0.8em; margin: 15px 0;">
+                    <strong style="color:#00ffcc;">設計者：</strong>張祐維、呂浩杰、林世美、李禮竹
+                </p>
             </div>
         </section>
 
@@ -297,7 +305,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
 <script>
-    // 初始化 Reveal.js
     Reveal.initialize({
         controls: true,
         progress: true,
@@ -308,7 +315,6 @@
         plugins: [ RevealHighlight ]
     });
 
-    // --- 自定義彈窗腳本 ---
     function showPopup(id) {
         document.getElementById(id).style.display = 'block';
     }
