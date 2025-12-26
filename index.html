@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <title>系統防禦戰：拒絕成癮的資安守則</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css" id="theme">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/monokai.min.css">
+    
+    <style>
+        /* --- v12.0 Final CSS (Layout Overflow Fix) --- */
+        body { background-color: #050505; }
+        .reveal { font-family: 'Segoe UI', 'Microsoft JhengHei', 'Courier New', monospace; }
+        
+        /* 1. 字體設定 (維持大字體，但微調以防跑版) */
+        .reveal h1 { font-size: 3.0em; color: #00ffcc; text-shadow: 0 0 25px rgba(0,255,204,0.8); text-transform: none; line-height: 1.1; margin-bottom: 10px; }
+        .reveal h2 { font-size: 2.2em; color: #00ffcc; text-transform: none; margin-bottom: 20px; }
+        .reveal h3 { font-size: 1.8em; color: #00ffcc; text-transform: none; margin-bottom: 10px; }
+        .reveal h4 { font-size: 1.4em; margin-bottom: 5px; }
+        
+        /* 內文設定：46px (夠大且安全) */
+        .reveal p, .reveal li, .reveal div { 
+            font-size: 46px; 
+            line-height: 1.25; /* 收緊行高 */
+            color: #e0e0e0; 
+        }
+        
+        .reveal small { font-size: 0.65em; vertical-align: middle; color: #aaa; }
+        .reveal strong { color: #fff; font-weight: bold; }
+        
+        /* 顏色樣式 */
+        .warning { color: #ff3333; font-weight: bold; text-shadow: 0 0 5px #ff0000; }
+        .success { color: #33ff33; font-weight: bold; text-shadow: 0 0 5px #00ff00; }
+        .highlight { color: #00ffcc; font-weight: bold; }
+        
+        /* 2. 程式碼區塊 (縮減留白) */
+        .code-box { 
+            background: #1e1e1e; 
+            border: 1px solid #444; 
+            border-left: 10px solid #00ffcc; 
+            padding: 20px; /* 減少內距 */
+            font-family: 'Courier New', Courier, monospace;
+            text-align: left;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+            font-size: 40px !important; 
+            margin-bottom: 25px !important;
+        }
+
+        /* 3. 比較圖表區塊 */
+        .comparison-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .comparison-box {
+            width: 48%; /* 稍微加寬 */
+            padding: 20px;
+            border: 3px dashed #444;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.05);
+        }
+        .comparison-box ul li {
+            margin-bottom: 15px; 
+        }
+
+        /* 4. 資安術語卡片 (大幅瘦身以防超出邊界) */
+        .term-card {
+            background: #111;
+            padding: 15px 25px; /* 上下內距減少 */
+            border-radius: 15px;
+            border: 2px solid #333;
+            margin-bottom: 15px; /* 卡片間距減少 */
+            text-align: left;
+        }
+        .term-card p {
+             margin: 0;
+        }
+
+        /* 5. 互動按鈕樣式 */
+        .game-options-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .game-btn {
+            padding: 20px 30px;
+            border: 4px solid #00ffcc;
+            color: #00ffcc;
+            font-weight: bold;
+            font-size: 44px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(0, 255, 204, 0.1);
+            flex: 1;
+            text-align: center;
+            user-select: none;
+        }
+        .game-btn:hover { 
+            background: #00ffcc; 
+            color: #000; 
+            box-shadow: 0 0 50px #00ffcc; 
+            transform: scale(1.05);
+        }
+        
+        /* 6. 結果彈窗 */
+        .result-popup {
+            display: none;
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%);
+            width: 90%; 
+            padding: 40px;
+            z-index: 999;
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+            border-radius: 20px;
+            background: rgba(10, 10, 10, 0.98);
+            text-align: center;
+        }
+        .close-btn {
+            margin-top: 30px; padding: 15px 40px; font-size: 32px;
+            background: #444; color: #fff; border: 1px solid #888;
+            border-radius: 10px; cursor: pointer;
+        }
+        .close-btn:hover { background: #666; }
+
+        /* 特效樣式 */
+        .stroop-red { color: #ff3333 !important; font-size: 2.0em !important; font-weight: bold; }
+        .stroop-green { color: #33ff33 !important; font-size: 2.0em !important; font-weight: bold; }
+        .stroop-blue { color: #3366ff !important; font-size: 2.0em !important; font-weight: bold; }
+        .stroop-yellow { color: #ffff33 !important; font-size: 2.0em !important; font-weight: bold; }
+
+        .roadmap-item { display: flex; align-items: center; margin: 20px 0; opacity: 0.9; }
+        .roadmap-icon { background: #00ffcc; color: #000; width: 55px; height: 55px; border-radius: 50%; text-align: center; line-height: 55px; font-weight: bold; font-size: 32px; margin-right: 25px; flex-shrink: 0; }
+
+        /* 影片按鈕 */
+        .video-launch-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 50px;
+            font-size: 36px;
+            color: #050505 !important;
+            background-color: #00ffcc;
+            text-decoration: none;
+            border-radius: 60px;
+            font-weight: 900;
+            box-shadow: 0 0 25px rgba(0,255,204,0.4);
+            transition: all 0.3s ease;
+            border: 3px solid #00ffcc;
+        }
+        .video-launch-btn:hover {
+            background-color: #000;
+            color: #00ffcc !important;
+            box-shadow: 0 0 60px rgba(0,255,204,0.8);
+            transform: scale(1.05);
+        }
+        
+        /* 圖片容器 */
+        .poster-container {
+            margin: 10px auto; 
+            height: 400px; /* 稍微調低高度以防跑版 */
+            width: 80%; 
+            border: 4px solid #00ffcc; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 40px rgba(0,255,204,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="reveal">
+    <div class="slides">
+
+        <section data-background-gradient="linear-gradient(to bottom, #000000, #1a1a1a)">
+            <h1>系統防禦戰</h1>
+            <h3>拒絕成癮的資安守則</h3>
+            <p style="font-size: 0.6em; color: #888; margin-top: 10px;">(單元名稱：拒絕成癮有妙招)</p>
+            
+            <div style="margin-top: 30px; border: 3px dashed #00ffcc; padding: 30px; display: inline-block; text-align: left; width: 85%;">
+                <p style="font-size: 0.8em; margin: 15px 0;">
+                    <strong style="color:#00ffcc;">領域：</strong>健康與體育 / 綜合活動 / 科技
+                </p>
+                <p style="font-size: 0.8em; margin: 15px 0;">
+                    <strong style="color:#00ffcc;">對象：</strong>七年級 (共1節 / 45分鐘)
+                </p>
+            </div>
+        </section>
+
+        <section>
+            <h2>系統掃描排程</h2>
+            <div style="text-align: left; margin-left: 5%; margin-top: 20px;">
+                <div class="roadmap-item fragment"><div class="roadmap-icon">1</div><div><strong>硬體識別</strong><br><small>具象：認識電腦與人腦的 CPU</small></div></div>
+                <div class="roadmap-item fragment"><div class="roadmap-icon">2</div><div><strong>系統檢測</strong><br><small>暖身：CPU 壓力測試遊戲</small></div></div>
+                <div class="roadmap-item fragment"><div class="roadmap-icon">3</div><div><strong>威脅分析</strong><br><small>知識：尼古丁木馬與釣魚網站</small></div></div>
+                <div class="roadmap-item fragment"><div class="roadmap-icon">4</div><div><strong>防火牆升級</strong><br><small>技能：拒絕成癮的六道指令</small></div></div>
+                <div class="roadmap-item fragment"><div class="roadmap-icon">5</div><div><strong>沙盒演練</strong><br><small>實戰：情境模擬互動遊戲</small></div></div>
+            </div>
+        </section>
+
+        <section>
+            <section>
+                <h2>1-1. 認識系統硬體</h2>
+                <div class="comparison-container">
+                    <div class="comparison-box">
+                        <h3 style="color:#00ffcc;">💻 電腦零件</h3>
+                        <ul style="font-size: 40px; list-style-type: none; padding: 0;">
+                            <li class="fragment" data-fragment-index="1"><strong>CPU (處理器)</strong><br><small>負責運算與下指令</small></li>
+                            <li class="fragment" data-fragment-index="2" style="margin-top:20px;"><strong>散熱風扇</strong><br><small>負責通風、排廢熱</small></li>
+                        </ul>
+                    </div>
+                    <div style="font-size: 60px;">=</div>
+                    <div class="comparison-box">
+                        <h3 style="color:#00ffcc;">🧠 人體構造</h3>
+                        <ul style="font-size: 40px; list-style-type: none; padding: 0;">
+                            <li class="fragment" data-fragment-index="1"><strong>大腦 (前額葉)</strong><br><small>負責判斷與拒絕</small></li>
+                            <li class="fragment" data-fragment-index="2" style="margin-top:20px;"><strong>肺部系統</strong><br><small>負責呼吸交換氣體</small></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>1-2. 常見資安威脅術語</h2>
+                <div style="width: 95%; margin: 0 auto;">
+                    <div class="fragment fade-up term-card">
+                        <h4 style="color:#ff3333; margin-bottom: 5px;">🐴 木馬程式 (Trojan Horse)</h4>
+                        <p style="font-size: 40px;">
+                            偽裝成好用的軟體，下載後會竊取權限。<br>
+                            <span style="color:#aaa; font-size: 0.8em;">(對應：尼古丁偽裝成快樂)</span>
+                        </p>
+                    </div>
+                    <div class="fragment fade-up term-card">
+                        <h4 style="color:#ff3333; margin-bottom: 5px;">🎣 釣魚網站 (Phishing)</h4>
+                        <p style="font-size: 40px;">
+                            做得跟真網站很像，騙你輸入帳號密碼。<br>
+                            <span style="color:#aaa; font-size: 0.8em;">(對應：電子煙的精美包裝)</span>
+                        </p>
+                    </div>
+                    <div class="fragment fade-up term-card">
+                        <h4 style="color:#ff3333; margin-bottom: 5px;">💥 DDoS 攻擊 (阻斷服務)</h4>
+                        <p style="font-size: 40px;">
+                            流量塞爆伺服器，導致系統當機無法運作。<br>
+                            <span style="color:#aaa; font-size: 0.8em;">(對應：同儕壓力讓你腦袋空白)</span>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2>1-3. 系統防禦術語</h2>
+                <div style="text-align: center; margin-top: 30px;">
+                    <div class="fragment scale-up" style="border: 5px solid #33ff33; padding: 30px; display: inline-block; border-radius: 30px;">
+                        <h3 style="color:#33ff33; font-size: 70px; margin-bottom: 20px;">🛡️ 防火牆</h3>
+                        <p>過濾所有進入的連線，</p>
+                        <p>並<span style="color:#33ff33; font-weight:bold;">「阻擋」</span>有害的訊息。</p>
+                    </div>
+                    <p class="fragment box" style="margin-top:30px; border:2px solid #00ffcc; padding:20px; color:#00ffcc;">
+                        System Message: 今天我們要幫大腦安裝這道防火牆！
+                    </p>
+                </div>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>2. CPU 壓力測試</h2>
+                <div class="code-box">
+                    <p>> echo "請快速唸出<span class="warning">字體的顏色</span>"</p>
+                    <p>> echo "千萬不要唸字義！"</p>
+                </div>
+                <p class="fragment" style="font-size: 1.2em;">Ready? (按下一頁開始)</p>
+            </section>
+            <section>
+                <h3>測試開始 (Debug Mode)</h3>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                    <p class="fragment stroop-green" style="margin: 30px;">紅</p> 
+                    <p class="fragment stroop-blue" style="margin: 30px;">黃</p>
+                    <p class="fragment stroop-red" style="margin: 30px;">綠</p>
+                    <p class="fragment stroop-yellow" style="margin: 30px;">藍</p>
+                    <p class="fragment stroop-blue" style="margin: 30px;">紅</p>
+                    <p class="fragment stroop-green" style="margin: 30px;">黑</p>
+                </div>
+                <div class="fragment code-box" style="margin-top: 40px;">
+                    <p>> Alert: High Latency (反應延遲)</p>
+                    <p>> 成癮物質會利用此漏洞！</p>
+                </div>
+            </section>
+        </section>
+
+        <section>
+            <section>
+                <h2>3. 威脅分析：尼古丁</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <div class="fragment fade-up" style="border: 3px solid #00ffcc; padding: 20px; border-radius: 20px;">
+                        <h4 style="color:#00ffcc; font-size: 50px;">尼古丁</h4>
+                        <p class="warning">木馬程式</p>
+                        <hr>
+                        <p style="font-size: 36px;">偽裝成神經傳導物質，綁架你的 CPU (大腦)。</p>
+                    </div>
+                    <div class="fragment fade-up" style="border: 3px solid #00ffcc; padding: 20px; border-radius: 20px;">
+                        <h4 style="color:#00ffcc; font-size: 50px;">一氧化碳</h4>
+                        <p class="warning">DDoS 攻擊</p>
+                        <hr>
+                        <p style="font-size: 36px;">搶走紅血球位置，讓全身缺氧當機。</p>
+                    </div>
+                    <div class="fragment fade-up" style="border: 3px solid #00ffcc; padding: 20px; border-radius: 20px;">
+                        <h4 style="color:#00ffcc; font-size: 50px;">焦油</h4>
+                        <p class="warning">硬體積塵</p>
+                        <hr>
+                        <p style="font-size: 36px;">黏附肺部風扇，導致散熱失敗 (肺癌)。</p>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h3>威脅變種：電子煙</h3>
+                <p><span class="warning" style="font-size: 50px;">偵測到釣魚網站 (Phishing)</span></p>
+                <div style="display: flex; align-items: flex-start; justify-content: center; margin-top: 30px;">
+                    <div style="width: 48%; border-right: 4px solid #555; padding-right: 20px;">
+                        <h4 class="success">前端 UI (偽裝)</h4>
+                        <ul><li>科技感外型</li><li>糖果口味</li><li>宣稱無害</li></ul>
+                    </div>
+                    <div style="width: 48%; padding-left: 20px;">
+                        <h4 class="warning">後端核心 (毒性)</h4>
+                        <ul><li>尼古丁 (成癮)</li><li>甲醛 (致癌)</li><li>重金屬</li></ul>
+                    </div>
+                </div>
+                <p class="fragment box" style="margin-top:30px; border:3px solid red; color:red; padding:20px; background: rgba(255,0,0,0.1);">Warning: 吸食即刻中毒！</p>
+            </section>
+        </section>
+
+        <section>
+            <h2>4. 防火牆安全協定</h2>
+            
+            <div class="fragment fade-up poster-container">
+                <img src="poster.jpg" alt="菸害防制法宣導海報" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+
+            <div class="fragment fade-up">
+                <a href="https://youtu.be/HvD2HU-t7yU" target="_blank" class="video-launch-btn">
+                    ▶️ 點擊前往 YouTube 觀看教學影片
+                </a>
+            </div>
+
+            <p class="fragment" style="font-size: 32px; color: #aaa; margin-top: 20px;">
+                (思考任務：影片中的主角使用了哪些指令來阻擋攻擊？)
+            </p>
+        </section>
+
+        <section>
+            <h2>5. 防火牆指令庫更新</h2>
+            <div style="text-align: left; width: 95%; margin: 0 auto;">
+                <p class="fragment" style="margin-bottom: 15px;"><code>$ Deny</code> <span class="highlight">堅持拒絕</span>：語氣堅定不猶豫。</p>
+                <p class="fragment" style="margin-bottom: 15px;"><code>$ Report</code> <span class="highlight">告知理由</span>：回報傷身、會被罵。</p>
+                <p class="fragment" style="margin-bottom: 15px;"><code>$ Exception</code> <span class="highlight">自我解嘲</span>：幽默化解尷尬。</p>
+                <p class="fragment" style="margin-bottom: 15px;"><code>$ Kill Process</code> <span class="highlight">遠離現場</span>：直接離開危險區。</p>
+                <p class="fragment" style="margin-bottom: 15px;"><code>$ Patch</code> <span class="highlight">友誼勸服</span>：反過來勸朋友別抽。</p>
+            </div>
+        </section>
+
+        <section>
+            <section>
+                <h3>6. 沙盒演練 Level 1</h3>
+                <div class="code-box">
+                    <p><strong>Scenario (情境):</strong></p>
+                    <p>補習班下課，好朋友阿傑拿出電子煙...</p>
+                    <p>阿傑：「欸，這是哈密瓜口味，沒尼古丁啦，試一口？」</p>
+                    <p class="warning">>> 偵測到社交工程攻擊</p>
+                </div>
+                <p style="margin-top: 0;">請用滑鼠點擊回應指令：</p>
+                
+                <div class="game-options-container">
+                    <div class="game-btn" onclick="showPopup('l1-fail')">A. 好吧，試一口</div>
+                    <div class="game-btn" onclick="showPopup('l1-pass')">B. 不要，這還有毒</div>
+                </div>
+
+                <div id="l1-fail" class="result-popup" style="border:5px solid red;">
+                    <h2 class="warning" style="font-size: 70px;">SYSTEM COMPROMISED!</h2>
+                    <hr>
+                    <p>阿傑騙了你。</p>
+                    <p>電子煙含尼古丁與化學溶劑。</p>
+                    <p>你已中毒，系統受損。</p>
+                    <button class="close-btn" onclick="hidePopup('l1-fail')">關閉視窗 (Try Again)</button>
+                </div>
+
+                <div id="l1-pass" class="result-popup" style="border:5px solid #00ffcc;">
+                    <h2 class="success" style="font-size: 70px;">FIREWALL ACTIVE!</h2>
+                    <hr>
+                    <p>成功阻擋攻擊！</p>
+                    <p>你使用了<strong>「堅持拒絕」</strong>指令。</p>
+                    <p>系統完整性：100%</p>
+                    <button class="close-btn" onclick="hidePopup('l1-pass')">關閉視窗 (Next Level)</button>
+                </div>
+            </section>
+
+            <section>
+                <h3>6. 沙盒演練 Level 2</h3>
+                <div class="code-box">
+                    <p><strong>Scenario (情境):</strong></p>
+                    <p>一群學長姊圍在校園角落抽菸...</p>
+                    <p>學長：「唷，看什麼看？不敢抽喔？是不是男人啊？」</p>
+                    <p class="warning">>> 偵測到同儕壓力 (DDoS)</p>
+                </div>
+                <p style="margin-top: 0;">請用滑鼠點擊回應指令：</p>
+                
+                <div class="game-options-container">
+                    <div class="game-btn" onclick="showPopup('l2-fail')">A. 誰不敢啊！(拿來)</div>
+                    <div class="game-btn" onclick="showPopup('l2-pass')">B. 笑笑帶過並離開</div>
+                </div>
+
+                <div id="l2-fail" class="result-popup" style="border:5px solid red;">
+                    <h2 class="warning" style="font-size: 70px;">CRITICAL ERROR!</h2>
+                    <hr>
+                    <p>你中了激將法 (Exploit)。</p>
+                    <p>為了面子賠上健康。</p>
+                    <p>肺部冷卻系統嚴重受損。</p>
+                    <button class="close-btn" onclick="hidePopup('l2-fail')">關閉視窗 (Try Again)</button>
+                </div>
+
+                <div id="l2-pass" class="result-popup" style="border:5px solid #00ffcc;">
+                    <h2 class="success" style="font-size: 70px;">THREAT AVOIDED!</h2>
+                    <hr>
+                    <p>防禦成功！</p>
+                    <p>使用了<strong>「遠離現場」</strong>指令。</p>
+                    <p>真正的工程師懂得保護核心代碼。</p>
+                    <button class="close-btn" onclick="hidePopup('l2-pass')">關閉視窗 (Mission Complete)</button>
+                </div>
+            </section>
+        </section>
+
+        <section>
+            <h2>Final Project: 人生專案</h2>
+            <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px;">
+                <ul>
+                    <li class="fragment" style="margin-bottom: 25px;">你的身體是精密硬體，無法替換。</li>
+                    <li class="fragment" style="margin-bottom: 25px;">大腦是最強 CPU，別讓尼古丁駭入。</li>
+                    <li class="fragment" style="margin-bottom: 25px;">生涯發展 = 不斷優化 OS。</li>
+                </ul>
+            </div>
+            <br>
+            <h3 class="success fragment" style="font-size: 60px;">> System Check: All Green.</h3>
+            <p class="fragment">做自己生命的主人 (System Admin)</p>
+        </section>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/plugin/highlight/highlight.min.js"></script>
+<script>
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        center: true,
+        hash: true,
+        width: 1200, height: 900, margin: 0.05, minScale: 0.2, maxScale: 2.0,
+        transition: 'zoom', 
+        plugins: [ RevealHighlight ]
+    });
+
+    function showPopup(id) {
+        document.getElementById(id).style.display = 'block';
+    }
+    
+    function hidePopup(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
